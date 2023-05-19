@@ -6,6 +6,7 @@ namespace AuthTest.Models
     {
         public IActionResult Index()
         {
+            /*HIIIIIIIIIIIIi*/
             return View();
         }
 
