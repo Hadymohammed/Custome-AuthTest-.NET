@@ -1,0 +1,4 @@
+﻿@using System.Security.Claims;
+@model User
+<h1>Hello User,@Model.Name</h1>
+<h3>You are @Context.User.Claims.Where(c=>c.Type==ClaimTypes.Role).FirstOrDefault().Value</h3>
