@@ -1,5 +1,6 @@
 using AuthTest.Data;
 using AuthTest.Models;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Security.Claims;
@@ -8,9 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+/*Data Source*/
 builder.Services.AddDbContext<Dbcontext>(options => options.UseSqlServer(
         builder.Configuration.GetConnectionString("defaultConnection")
         ));
+/*Auth*/
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", config =>
     {
@@ -29,7 +33,15 @@ builder.Services.AddAuthorization(config =>
     });
 });
 builder.Services.AddScoped<IUserManager, UserManager>();
+/*Sessions*/
+builder.Services.AddDistributedMemoryCache();
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(2);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -41,7 +53,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseSession();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
