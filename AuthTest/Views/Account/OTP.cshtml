@@ -1,0 +1,11 @@
+﻿@using AuthTest.ViewModels;
+
+@model OTPVM
+
+<div>
+    <form class="form" asp-action="OTP">
+        <label asp-for="OTP"></label>
+        <input type="text" asp-for="OTP" maxlength="6"/>
+        <input type="submit" class="btn" value="Verfiy"/>
+    </form>
+</div>
