@@ -2,7 +2,7 @@
 {
     public class OTPVM
     {
-        public string OTP { set; get; }
+        public char[] OTP { set; get; } = new char[6];
         public bool valid { set; get; }
 
     }

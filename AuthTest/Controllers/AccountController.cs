@@ -74,7 +74,7 @@ namespace AuthTest.Controllers
         }
        
         [HttpPost]
-        public async Task<IActionResult> RegisterAsync(RegisterVM user)
+        public IActionResult Register(RegisterVM user)
         {
             if (!ModelState.IsValid)
                 return View(user);
@@ -108,24 +108,29 @@ namespace AuthTest.Controllers
         {
             int otpValue = new Random().Next(100000, 999999);
             HttpContext.Session.SetString("OTP", otpValue.ToString());
-            return View();
+            return PartialView("_OTP");
         }
         [HttpPost]
-        public async Task<IActionResult> OTP(OTPVM receivedOTP)
+        public async Task<IActionResult> VerifyOTP(OTPVM receivedOTP)
         {
             bool result = false;
             var ValidOTP = HttpContext.Session.GetString("OTP");
+            var resceivedStringOTP = string.Join("", receivedOTP.OTP);
             if (ValidOTP == null)
-                return View(receivedOTP);
+                return RedirectToAction("Register");
 
-            if (receivedOTP.OTP == ValidOTP)
+            if (resceivedStringOTP == ValidOTP)
             {
                 var stringfyUser = HttpContext.Session.GetString("User");
                 if (stringfyUser == null)
-                    return View(receivedOTP);
+                    return RedirectToAction("Register");
 
                 RegisterVM _registeredUser = (RegisterVM)JsonConvert.DeserializeObject<RegisterVM>(stringfyUser);
+                
+                if (_registeredUser is null)
+                    RedirectToAction("Register");
                 result = true;
+
                 if (_registeredUser.Role == UserRoles.User)
                 {
                     User dbUser = new User()
@@ -157,7 +162,8 @@ namespace AuthTest.Controllers
             
             result = false;
             receivedOTP.valid = false;
-            return View(receivedOTP);
+            ModelState.AddModelError("OTP", "Invalid login attempt, incorrect OTP.");
+            return RedirectToAction("OTP");
         }
     }
 }

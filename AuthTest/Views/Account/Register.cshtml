@@ -14,7 +14,7 @@
 
         <div class="row">
             <div class="col-md-8 offset-2">
-                <form asp-action="Register">
+                <form id="RegisterForm" asp-action="Register" method="POST">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                     <div class="form-group">
@@ -49,3 +49,13 @@
         </div>
     </div>
 </div>
+
+
+<div id="otpVerificationContainer"></div>
+
+
+@section scripts
+{
+<script src="~/js/Register.js"></script>
+<script src="~/js/OTP.js"></script>
+}
